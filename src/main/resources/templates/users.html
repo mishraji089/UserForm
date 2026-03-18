@@ -151,8 +151,10 @@ if(!res.ok){
 throw new Error("Failed to fetch users");
 }
 
+
 allUsers = await res.json();
 renderUsers(allUsers);
+
 }
 catch(error){
 console.error(error);
@@ -191,6 +193,10 @@ function renderUsers(users){
     users.forEach(user => {
 
         const tr = document.createElement("tr");
+        
+        tr.className = "hover:bg-indigo-50 cursor-pointer";
+        tr.onclick = () => editUser(user.id);
+        
 
         tr.innerHTML = `
         <td class="py-2 px-4">${user.id}</td>
