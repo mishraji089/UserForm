@@ -17,12 +17,10 @@ public class PageController {
 			return "form";
 		}
 	
-//	@GetMapping("/dasboard")
-//		public String dashboard() {
-//			return "dashboard";
-//			
-//			
-//		}
+    @GetMapping("/reports")
+    public String reportsPage() {
+    	return "reports";
+    }
 	
 	}
 	
