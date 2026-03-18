@@ -48,13 +48,7 @@
                 <div class="flex gap-4">
 
     <!-- Reports Button -->
-    <a href="/reports"
-       class="group relative bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center gap-3 transform hover:-translate-y-1">
-        <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6m4 6V7m4 10v-4M5 21h14"/>
-        </svg>
-        Reports
-    </a>
+    
 
     <!-- Back Button -->
     <a href="/back"
@@ -118,9 +112,29 @@
     </div>
 </div>
 
-<!-- All your existing scripts remain EXACTLY the same -->
+
 <script>
+	
+	let allUsers=[];
+	
 const API = "http://localhost:8080/users";
+
+
+
+function searchUsers(){
+	
+	const searchValue=document.getElementById("searchInput").value.toLowerCase();
+	const filtered = allUsers.filter(user => 
+        user.name.toLowerCase().includes(searchValue) ||
+        user.email.toLowerCase().includes(searchValue)
+    );
+
+    renderUsers(filtered);
+}
+
+
+
+
 
 async function loadUsers(){
 const table = document.getElementById("usersTable");
@@ -136,43 +150,9 @@ const res = await fetch(API);
 if(!res.ok){
 throw new Error("Failed to fetch users");
 }
-const users = await res.json();
-table.innerHTML = "";
-if(users.length === 0){
-table.innerHTML = `
-<tr>
-<td colspan="7" class="text-center py-4 text-gray-500">
-No users found
-</td>
-</tr>
-`;
-return;
-}
-users.forEach(user => {
-const tr = document.createElement("tr");
-tr.className = "hover:bg-indigo-50/50 hover:shadow-sm transition-all duration-200 cursor-pointer group";
-tr.onclick = () => editUser(user.id);
-tr.innerHTML = `
-<td class="py-5 px-8 font-mono font-semibold text-indigo-900 group-hover:text-indigo-700">${user.id}</td>
-<td class="py-5 px-8 font-semibold text-gray-800">${user.state ? user.state.stateNameEnglish : ""}</td>
-<td class="py-5 px-8 font-bold text-gray-900 text-xl group-hover:text-indigo-900">${user.name}</td>
-<td class="py-5 px-8 font-medium text-gray-700 max-w-md truncate">${user.email}</td>
-<td class="py-5 px-8">
-    <span class="px-4 py-2 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 text-sm font-semibold rounded-full">
-        ${user.gender}
-    </span>
-</td>
-<td class="py-5 px-8 font-mono text-sm text-gray-600">${formatDate(user.dob)}</td>
-<td class="py-5 px-8">
-<button
-class="group/btn relative bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 z-10 select-none"
-onclick="deleteUser(event, ${user.id})">
-    <span class="relative z-10">Delete</span>
-</button>
-</td>
-`;
-table.appendChild(tr);
-});
+
+allUsers = await res.json();
+renderUsers(allUsers);
 }
 catch(error){
 console.error(error);
@@ -190,6 +170,45 @@ table.innerHTML = `
 `;
 showAlert("Failed to load users","error");
 }
+}
+
+function renderUsers(users){
+
+    const table = document.getElementById("usersTable");
+    table.innerHTML = "";
+
+    if(users.length === 0){
+        table.innerHTML = `
+        <tr>
+            <td colspan="7" class="text-center py-4 text-gray-500">
+                No users found
+            </td>
+        </tr>
+        `;
+        return;
+    }
+
+    users.forEach(user => {
+
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+        <td class="py-2 px-4">${user.id}</td>
+        <td class="py-2 px-4">${user.state?.stateNameEnglish || ""}</td>
+        <td class="py-2 px-4">${user.name}</td>
+        <td class="py-2 px-4">${user.email}</td>
+        <td class="py-2 px-4">${user.gender}</td>
+        <td class="py-2 px-4">${formatDate(user.dob)}</td>
+        <td class="py-2 px-4">
+            <button onclick="deleteUser(event, ${user.id})"
+            class="bg-red-500 text-white px-2 py-1 rounded">
+            Delete
+            </button>
+        </td>
+        `;
+
+        table.appendChild(tr);
+    });
 }
 
 function formatDate(date){

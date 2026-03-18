@@ -119,10 +119,24 @@
 	
 const API="http://localhost:8080/users";
 
+
+
+
+
+
+
+
 function formatDate(date){
 	const d=new Date(date);
 	return d.toLocaleDateString("en-IN");
 }
+
+
+
+
+
+
+
 
 async function loadStates(){
 	
@@ -142,6 +156,14 @@ async function loadStates(){
 		
 	});	
 }
+
+
+
+
+
+
+
+
 
 async function loadUsers(){
 
@@ -218,6 +240,13 @@ async function loadUsers(){
 }
 
 
+
+
+
+
+
+
+
 function searchUsers(){
 
 const input = document.getElementById("searchInput").value.toLowerCase();
@@ -229,6 +258,12 @@ row.style.display = text.includes(input) ? "" : "none";
 });
 
 }
+
+
+
+
+
+
 function downloadReport(){
     let table = document.getElementById("usersTable");
     let data = [];
@@ -259,6 +294,11 @@ function downloadReport(){
 
     XLSX.writeFile(workbook, "Users_Report.xlsx");
 }
+
+
+
+
+
 
 window.onload = function(){
 loadStates();
