@@ -180,6 +180,11 @@
     var state_API="http://localhost:8080/states"
     
     
+    
+    
+    
+    
+    
 function showFieldError(inputId, message){
 
 const input = document.getElementById(inputId);
@@ -191,6 +196,12 @@ error.classList.remove("hidden");
 
 }
 
+
+
+
+
+
+
 function clearFieldError(inputId){
 
 const input = document.getElementById(inputId);
@@ -201,6 +212,13 @@ error.innerText = "";
 error.classList.add("hidden");
 
 }
+
+
+
+
+
+
+
     
     async function searchUser(){
     const email=document.getElementById("searchEmail").value.trim();
@@ -229,81 +247,127 @@ error.classList.add("hidden");
     }
     }
 
+
+
+
+
+
+
+
+
+
     async function addUser(){
+
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
     const gender = document.getElementById("gender").value;
     const dob = document.getElementById("dob").value;
     const stateId = document.getElementById("stateId").value;
-    
+
     ["name","email","gender","dob","stateId"].forEach(id=>{
-		document.getElementById(id).addEventListener("input",()=>{
-			clearFieldError(id);
-		});
-	});
-    
-    let isValid=true;
-    
-    
-		if(!name){
-			showFieldError("name","Name is Required");
-			isValid=false;
-		}
-		if(!email){
-			showFieldError("email","Email is Required");
-			isValid=false;
-		}
-		if(!isValidEmail(email)){
-			showFieldError("email","Ivalid email Format");
-			isValid=false;
-		}
-		
-		if(!gender){
-			showFieldError("gender","Select gender");
-			isValid=false;
-		}
-		
-		if(!dob){
-			showFieldError("dob","Date of birth is required");
-			isValid=false;
-		}
-		if(!stateId){
-			showFieldError("stateId","Please select the state");
-			isValid=false;
-		}
-		if(!isValid) return ;
-	
-    const user = {
-    name,
-    email,
-    gender,
-    dob,
-    state:{
-    stateCode:Number(stateId)
-    }
-    };
-    try{
-    const res = await fetch(API,{
-    method:"POST",
-    headers:{
-    "Content-Type":"application/json"
-    },
-    body:JSON.stringify(user)
+        document.getElementById(id).addEventListener("input",()=>{
+            clearFieldError(id);
+        });
     });
-    if(res.status === 409){
-showFieldError("email","Email already exists");
-return;
-}
-    if(!res.ok){
-    throw new Error("Failed to add user");
+
+   
+    if(!email){
+        showFieldError("email","Email is Required");
+        return;
     }
-    alert("User added successfully");
-    clearForm();
+
+    if(!isValidEmail(email)){
+        showFieldError("email","Invalid email format");
+        return;
+    }
+
+    
+    try{
+        const checkRes = await fetch(API + "/check-email?email=" + email);
+
+        if(checkRes.ok){
+            const exists = await checkRes.json();
+
+            if(exists){
+                showFieldError("email","Email already exists");
+                return;
+            }
+        }
     }catch(err){
-    alert(err.message);
-    console.error(err);
+        console.error("Email check failed", err);
     }
+
+    
+    let isValid = true;
+
+    if(!name){
+        showFieldError("name","Name is Required");
+        isValid = false;
     }
+
+    if(!gender){
+        showFieldError("gender","Select gender");
+        isValid = false;
+    }
+
+    if(!dob){
+        showFieldError("dob","Date of birth is required");
+        isValid = false;
+    }
+
+    if(!stateId){
+        showFieldError("stateId","Please select the state");
+        isValid = false;
+    }
+
+    if(!isValid) return;
+
+    
+    const user = {
+        name,
+        email,
+        gender,
+        dob,
+        state:{
+            stateCode:Number(stateId)
+        }
+    };
+
+    try{
+        const res = await fetch(API,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(user)
+        });
+
+        if(res.status === 409){
+            showFieldError("email","Email already exists");
+            return;
+        }
+
+        if(!res.ok){
+            throw new Error("Failed to add user");
+        }
+
+        alert("User added successfully");
+        clearForm();
+
+    }catch(err){
+        alert(err.message);
+        console.error(err);
+    }
+}
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     async function updateUser(){
     const email = document.getElementById("email").value.trim();
@@ -367,6 +431,12 @@ return;
     }
     }
     
+    
+    
+    
+    
+    
+    
     function clearForm(){
     document.getElementById("name").value="";
     document.getElementById("email").value="";
@@ -375,6 +445,11 @@ return;
     document.getElementById("stateId").value="";
     selectedId=null;
     }
+    
+    
+    
+    
+    
     
     async function loadStates(){
     const dropdown = document.getElementById("stateId");
@@ -403,9 +478,17 @@ return;
     }
     }
 
+
+
+
+
     function showUsersPage(){
     window.location.href="users.html";
     }
+    
+    
+    
+    
     
     
    function loadUserFromURL(){ const params = new URLSearchParams(window.location.search); 
@@ -422,6 +505,12 @@ return;
 	 document.getElementById("stateId").value = user.state.stateCode;
 	  }); 
 	  }
+ 
+ 
+ 
+ 
+ 
+ 
  
     function showAlert(message,type="success"){
     const alertBox=document.getElementById("alertBox");
@@ -443,10 +532,14 @@ return;
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+
+
+
     window.onload = function(){
     loadStates();
     loadUserFromURL();
     }
+    
 </script>
 
 </body>

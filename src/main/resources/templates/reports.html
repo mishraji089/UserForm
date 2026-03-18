@@ -57,7 +57,13 @@
                class="w-full pl-14 pr-6 py-4 text-lg border-2 border-slate-200 rounded-2xl bg-gradient-to-r from-slate-50 to-indigo-50 shadow-lg hover:shadow-xl hover:border-indigo-200 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition-all duration-300 font-medium"
                onkeyup="searchUsers()"/>
       </div>
-
+      <a href="/back"
+       class="group relative bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center gap-3 transform hover:-translate-y-1">
+        <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Back to Form
+    </a>
       
     </div>
   </div>
@@ -144,21 +150,21 @@ async function loadUsers(){
 
     try{
 
-        // ✅ Show loading
+      
         table.innerHTML = `
         <tr>
             <td colspan="6" class="text-center py-4">Loading...</td>
         </tr>
         `;
 
-        // ✅ Build API URL
+        
         let url = "http://localhost:8080/users";
 
         if(stateId){
             url += "?stateId=" + stateId;
         }
 
-        // ✅ Fetch filtered data from backend
+       
         const res = await fetch(url);
 
         if(!res.ok){
@@ -169,7 +175,7 @@ async function loadUsers(){
 
         table.innerHTML = "";
 
-        // ✅ No data case
+       
         if(users.length === 0){
             table.innerHTML = `
             <tr>
@@ -181,7 +187,7 @@ async function loadUsers(){
             return;
         }
 
-        // ✅ Render users
+       
         users.forEach(user => {
 
             const tr = document.createElement("tr");

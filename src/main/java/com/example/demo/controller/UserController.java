@@ -115,4 +115,9 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/check-email")
+    public boolean checkEmail(@RequestParam String email){
+        return userRepository.existsByEmail(email);
+    }
 }
