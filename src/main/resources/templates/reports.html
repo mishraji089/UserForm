@@ -139,46 +139,76 @@ async function loadStates(){
 
 async function loadUsers(){
 
-const table = document.getElementById("usersTable");
-const stateId = document.getElementById("stateFilter").value;
+    const table = document.getElementById("usersTable");
+    const stateId = document.getElementById("stateFilter").value;
 
-try{
+    try{
 
-const res = await fetch(API);
-const users = await res.json();
+        // ✅ Show loading
+        table.innerHTML = `
+        <tr>
+            <td colspan="6" class="text-center py-4">Loading...</td>
+        </tr>
+        `;
 
-table.innerHTML = "";
+        // ✅ Build API URL
+        let url = "http://localhost:8080/users";
 
+        if(stateId){
+            url += "?stateId=" + stateId;
+        }
 
-let filteredUsers = users;
+        // ✅ Fetch filtered data from backend
+        const res = await fetch(url);
 
-if(stateId){
-filteredUsers = users.filter(u => 
-u.state && u.state.stateCode == stateId
-);
-}
+        if(!res.ok){
+            throw new Error("Failed to fetch users");
+        }
 
-filteredUsers.forEach(user => {
+        const users = await res.json();
 
-const tr = document.createElement("tr");
+        table.innerHTML = "";
 
-tr.innerHTML = `
-<td class="py-2 px-4">${user.id}</td>
-<td class="py-2 px-4">${user.state?.stateNameEnglish || ""}</td>
-<td class="py-2 px-4">${user.name}</td>
-<td class="py-2 px-4">${user.email}</td>
-<td class="py-2 px-4">${user.gender}</td>
-<td class="py-2 px-4">${formatDate(user.dob)}</td>
-`;
+        // ✅ No data case
+        if(users.length === 0){
+            table.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4 text-gray-500">
+                    No users found
+                </td>
+            </tr>
+            `;
+            return;
+        }
 
-table.appendChild(tr);
+        // ✅ Render users
+        users.forEach(user => {
 
-});
+            const tr = document.createElement("tr");
 
-}catch(err){
-console.error(err);
-}
+            tr.innerHTML = `
+            <td class="py-2 px-4">${user.id}</td>
+            <td class="py-2 px-4">${user.state?.stateNameEnglish || ""}</td>
+            <td class="py-2 px-4">${user.name}</td>
+            <td class="py-2 px-4">${user.email}</td>
+            <td class="py-2 px-4">${user.gender}</td>
+            <td class="py-2 px-4">${formatDate(user.dob)}</td>
+            `;
 
+            table.appendChild(tr);
+        });
+
+    }catch(err){
+        console.error(err);
+
+        table.innerHTML = `
+        <tr>
+            <td colspan="6" class="text-center py-4 text-red-500">
+                Failed to load users
+            </td>
+        </tr>
+        `;
+    }
 }
 
 

@@ -23,12 +23,27 @@ public class UserController {
 
     @Autowired
     private StateRepository stateRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
 
     // Get all users
     @GetMapping
-    public List<User> getUsers(){
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getUsers(
+            @RequestParam(required = false) Integer stateId) {
+
+        List<User> users;
+
+        if(stateId != null){
+            users = userRepository.findByState_StateCode(stateId);
+        } else {
+            users = userRepository.findAll();
+        }
+
+        return ResponseEntity.ok(users);
     }
+    
+    
 
     // Get user by id
     @GetMapping("/{id}")
